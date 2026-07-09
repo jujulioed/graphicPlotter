@@ -5,9 +5,20 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 
 from events.ui_events import listbox_selection_changed 
 
-#def points_menu(parent:ttk.Frame):
-    
+def add_point_menu(parent:Tk):
+    parent.attributes("-alpha", 0.9)
+    parent.wm_attributes("-disabled", True)
+    window = Toplevel(parent)
+    window.title("Add new point")
+    window.geometry("250x150")
 
+    Label(window, text="Insert the coordinates").grid(column=0, row=0)
+    ttk.Button(window, text="Quit", command=lambda: close_menu(window=window, parent=parent)).grid(column=1, row=0)
+    
+def close_menu(window, parent:Tk):
+    parent.attributes("-alpha", 1)
+    parent.wm_attributes("-disabled", False)
+    window.destroy()
 
 def plot(parent):
     fig = Figure(figsize=(5,5), dpi=100)
@@ -54,17 +65,25 @@ def main():
     ttk.Label(frame, text="Hello World").grid(column=0, row=0)
     ttk.Button(frame, text="Quit", command=root.destroy).grid(column=1, row=0)
 
+    ## Base of the window
     ttk.Frame(root, padding=10)
     ttk.Label(frame, text="Hello World").grid(column=0, row=0)
 
+    ## List box
     listbox = Listbox(root)
     for item in ["Coord 1", "Coord 2", "Coord 3"]:
         listbox.insert(END, item)
 
+    # tracks the Event "ListboxSelect" and call the function
     listbox.bind("<<ListboxSelect>>", listbox_selection_changed)
     listbox.grid(column=0, row=3, columnspan=2, sticky="nsew")
     
+    ## graph
     plot(root)
+
+    ## 'add' menu
+    # In this case, `lambda` wraps the function "add_point_menu(root)" so that we can pass the required argument rather than the function's return value.
+    Button(root, text="Add new Coordinate", command= lambda: add_point_menu(root)).grid(column=0, row=4)
 
     root.mainloop()
 
